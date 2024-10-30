@@ -1,10 +1,11 @@
 ﻿// src/components/Register.js
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import './styles.css'; // Ensure to create this CSS file or update the path
 
 const Register = ({ setIsAuthenticated }) => {
   const [formData, setFormData] = useState({
-    name: '',
+    username: '',
     email: '',
     password: '',
     confirmPassword: ''
@@ -27,7 +28,7 @@ const Register = ({ setIsAuthenticated }) => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          name: formData.name,
+          username: formData.username,
           email: formData.email,
           password: formData.password
         })
@@ -66,102 +67,58 @@ const Register = ({ setIsAuthenticated }) => {
   };
 
   return (
-    <div>
-      <style>
-        {`
-          .container {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #f9fafb;
-            padding: 3rem 1rem;
-          }
-          .form-container {
-            max-width: 400px;
-            width: 100%;
-            background: white;
-            padding: 2rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-          }
-          .error {
-            color: #e53e3e;
-            text-align: center;
-            margin-bottom: 1rem;
-          }
-          .input {
-            width: 100%;
-            padding: 0.75rem;
-            margin-bottom: 0.5rem;
-            border: 1px solid #d2d6dc;
-            border-radius: 0.375rem;
-          }
-          .button {
-            width: 100%;
-            padding: 0.75rem;
-            background-color: #4f46e5;
-            color: white;
-            font-weight: 600;
-            border-radius: 0.375rem;
-            transition: background-color 0.3s ease;
-          }
-          .button:hover {
-            background-color: #4338ca;
-          }
-          .text-center {
-            text-align: center;
-          }
-          .link {
-            color: #4f46e5;
-          }
-        `}
-      </style>
-      
-      <div className="container">
-        <div className="form-container">
-          <h2 className="text-center text-2xl font-bold">Create your account</h2>
-          <form onSubmit={handleSubmit}>
-            {error && <div className="error">{error}</div>}
+    <div className="container">
+      <div className="login-container">
+        <h2>REGISTER</h2>
+        <form id="registerForm" onSubmit={handleSubmit}>
+          {error && <div className="error-text">{error}</div>}
+          <div className="input-group">
             <input
               type="text"
-              className="input"
-              placeholder="Full Name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              placeholder="Username"
               required
+              value={formData.username}
+              onChange={(e) => setFormData({ ...formData, username: e.target.value })}
             />
+          </div>
+          <div className="input-group">
             <input
               type="email"
-              className="input"
-              placeholder="Email address"
+              placeholder="Email"
+              required
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              required
             />
+          </div>
+          <div className="input-group">
             <input
               type="password"
-              className="input"
               placeholder="Password"
+              required
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              required
             />
+          </div>
+          <div className="input-group">
             <input
               type="password"
-              className="input"
               placeholder="Confirm Password"
+              required
               value={formData.confirmPassword}
               onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-              required
             />
-            <button type="submit" className="button">Register</button>
-          </form>
-          <p className="text-center mt-4">
-            Already have an account?{' '}
-            <Link to="/login" className="link">Sign in</Link>
-          </p>
-        </div>
+          </div>
+          <button type="submit">Register Now</button>
+        </form>
+        <p>Register with Others</p>
+        <button className="social-btn">Register with Google</button>
+        <button className="social-btn">Register with Facebook</button>
+        <p>
+          Already have an account? <Link to="/login">Login</Link>
+        </p>
+      </div>
+      <div className="image-container">
+        <img src="path/to/your-image.png" alt="Registration Image" />
       </div>
     </div>
   );
