@@ -1,289 +1,656 @@
-// src/components/CreateResume.js
 import React, { useState } from 'react';
-import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { Check, ChevronRight, ChevronLeft, Plus, Trash2, Upload } from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./card";
+import './ResumeBuilder.css';
 
-const CreateResume = () => {
-  const [activeTab, setActiveTab] = useState('personalInfo');
-  const [resumeData, setResumeData] = useState({
+//import { Alert, AlertDescription } from "@/components/ui/alert";
+
+const ResumeBuilder = () => {
+  const [currentStep, setCurrentStep] = useState(1);
+  const [formState, setFormState] = useState({
+    title: '',
     personalInfo: {
       fullName: '',
       email: '',
       phone: '',
       location: '',
-      linkedin: ''
+      linkedin: '',
+      portfolio: '',
+      photo: null
     },
-    summary: '',
-    experience: [{ company: '', position: '', duration: '', description: '' }],
-    education: [{ institution: '', degree: '', year: '', gpa: '' }],
-    skills: ['']
+    professionalSummary: '',
+    experience: [{
+      company: '',
+      position: '',
+      startDate: '',
+      endDate: '',
+      current: false,
+      description: '',
+      achievements: ['']
+    }],
+    education: [{
+      institution: '',
+      degree: '',
+      field: '',
+      startDate: '',
+      endDate: '',
+      gpa: ''
+    }],
+    skills: {
+      technical: [''],
+      soft: [''],
+      languages: ['']
+    },
+    certifications: [{
+      name: '',
+      issuer: '',
+      date: '',
+      url: ''
+    }]
   });
 
-  const handleTabChange = (tab) => setActiveTab(tab);
+  const steps = [
+    { number: 1, title: 'Basic Info', description: 'Start with your personal details' },
+    { number: 2, title: 'Professional Summary', description: 'Write a compelling overview' },
+    { number: 3, title: 'Experience', description: 'Add your work history' },
+    { number: 4, title: 'Education', description: 'List your academic background' },
+    { number: 5, title: 'Skills', description: 'Highlight your expertise' },
+    { number: 6, title: 'Certifications', description: 'Add professional credentials' },
+    { number: 7, title: 'Review', description: 'Review and finalize' }
+  ];
 
-  const handleChange = (section, field, value) => {
-    setResumeData(prev => ({
+  const handleInputChange = (section, field, value, index = null) => {
+    setFormState(prev => {
+      if (index !== null && Array.isArray(prev[section])) {
+        const newArray = [...prev[section]];
+        newArray[index] = { ...newArray[index], [field]: value };
+        return { ...prev, [section]: newArray };
+      } else if (section === 'personalInfo') {
+        return {
+          ...prev,
+          personalInfo: { ...prev.personalInfo, [field]: value }
+        };
+      } else if (section === 'skills') {
+        return {
+          ...prev,
+          skills: { ...prev.skills, [field]: value }
+        };
+      }
+      return { ...prev, [section]: value };
+    });
+  };
+
+  const addArrayItem = (section, defaultItem) => {
+    setFormState(prev => ({
       ...prev,
-      [section]: {
-        ...prev[section],
-        [field]: value
+      [section]: [...prev[section], defaultItem]
+    }));
+  };
+
+  const removeArrayItem = (section, index) => {
+    setFormState(prev => ({
+      ...prev,
+      [section]: prev[section].filter((_, i) => i !== index)
+    }));
+  };
+
+  const addSkill = (category) => {
+    setFormState(prev => ({
+      ...prev,
+      skills: {
+        ...prev.skills,
+        [category]: [...prev.skills[category], '']
       }
     }));
   };
 
-  const handleExperienceChange = (index, field, value) => {
-    const updatedExperience = [...resumeData.experience];
-    updatedExperience[index] = { ...updatedExperience[index], [field]: value };
-    setResumeData(prev => ({ ...prev, experience: updatedExperience }));
-  };
-
-  const handleEducationChange = (index, field, value) => {
-    const updatedEducation = [...resumeData.education];
-    updatedEducation[index] = { ...updatedEducation[index], [field]: value };
-    setResumeData(prev => ({ ...prev, education: updatedEducation }));
-  };
-
-  const handleSkillChange = (index, value) => {
-    const updatedSkills = [...resumeData.skills];
-    updatedSkills[index] = value;
-    setResumeData(prev => ({ ...prev, skills: updatedSkills }));
-  };
-
-  const addExperience = () => {
-    setResumeData(prev => ({
+  const removeSkill = (category, index) => {
+    setFormState(prev => ({
       ...prev,
-      experience: [...prev.experience, { company: '', position: '', duration: '', description: '' }]
+      skills: {
+        ...prev.skills,
+        [category]: prev.skills[category].filter((_, i) => i !== index)
+      }
     }));
   };
 
-  const removeExperience = (index) => {
-    setResumeData(prev => ({
-      ...prev,
-      experience: prev.experience.filter((_, i) => i !== index)
-    }));
-  };
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Full Name</label>
+                <input
+                  type="text"
+                  className="w-full p-2 border rounded-md"
+                  value={formState.personalInfo.fullName}
+                  onChange={(e) => handleInputChange('personalInfo', 'fullName', e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Email</label>
+                <input
+                  type="email"
+                  className="w-full p-2 border rounded-md"
+                  value={formState.personalInfo.email}
+                  onChange={(e) => handleInputChange('personalInfo', 'email', e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Phone</label>
+                <input
+                  type="tel"
+                  className="w-full p-2 border rounded-md"
+                  value={formState.personalInfo.phone}
+                  onChange={(e) => handleInputChange('personalInfo', 'phone', e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Location</label>
+                <input
+                  type="text"
+                  className="w-full p-2 border rounded-md"
+                  value={formState.personalInfo.location}
+                  onChange={(e) => handleInputChange('personalInfo', 'location', e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">LinkedIn</label>
+                <input
+                  type="url"
+                  className="w-full p-2 border rounded-md"
+                  value={formState.personalInfo.linkedin}
+                  onChange={(e) => handleInputChange('personalInfo', 'linkedin', e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Portfolio</label>
+                <input
+                  type="url"
+                  className="w-full p-2 border rounded-md"
+                  value={formState.personalInfo.portfolio}
+                  onChange={(e) => handleInputChange('personalInfo', 'portfolio', e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+        );
 
-  const addEducation = () => {
-    setResumeData(prev => ({
-      ...prev,
-      education: [...prev.education, { institution: '', degree: '', year: '', gpa: '' }]
-    }));
-  };
+      case 2:
+        return (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Professional Summary</label>
+              <textarea
+                className="w-full p-2 border rounded-md h-32"
+                value={formState.professionalSummary}
+                onChange={(e) => handleInputChange('professionalSummary', null, e.target.value)}
+                placeholder="Write a compelling summary of your professional background..."
+              />
+            </div>
+          </div>
+        );
 
-  const removeEducation = (index) => {
-    setResumeData(prev => ({
-      ...prev,
-      education: prev.education.filter((_, i) => i !== index)
-    }));
-  };
+      case 3:
+        return (
+          <div className="space-y-6">
+            {formState.experience.map((exp, index) => (
+              <Card key={index} className="relative">
+                <CardHeader>
+                  <CardTitle className="text-lg">Experience {index + 1}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Company</label>
+                      <input
+                        type="text"
+                        className="w-full p-2 border rounded-md"
+                        value={exp.company}
+                        onChange={(e) => handleInputChange('experience', 'company', e.target.value, index)}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Position</label>
+                      <input
+                        type="text"
+                        className="w-full p-2 border rounded-md"
+                        value={exp.position}
+                        onChange={(e) => handleInputChange('experience', 'position', e.target.value, index)}
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Start Date</label>
+                      <input
+                        type="date"
+                        className="w-full p-2 border rounded-md"
+                        value={exp.startDate}
+                        onChange={(e) => handleInputChange('experience', 'startDate', e.target.value, index)}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">End Date</label>
+                      <input
+                        type="date"
+                        className="w-full p-2 border rounded-md"
+                        value={exp.endDate}
+                        onChange={(e) => handleInputChange('experience', 'endDate', e.target.value, index)}
+                        disabled={exp.current}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Description</label>
+                    <textarea
+                      className="w-full p-2 border rounded-md h-24"
+                      value={exp.description}
+                      onChange={(e) => handleInputChange('experience', 'description', e.target.value, index)}
+                    />
+                  </div>
+                </CardContent>
+                <CardFooter className="justify-end space-x-2">
+                  {formState.experience.length > 1 && (
+                    <button
+                      onClick={() => removeArrayItem('experience', index)}
+                      className="flex items-center text-red-600 hover:text-red-700"
+                    >
+                      <Trash2 className="w-4 h-4 mr-1" />
+                      Remove
+                    </button>
+                  )}
+                </CardFooter>
+              </Card>
+            ))}
+            <button
+              onClick={() => addArrayItem('experience', {
+                company: '',
+                position: '',
+                startDate: '',
+                endDate: '',
+                current: false,
+                description: '',
+                achievements: ['']
+              })}
+              className="flex items-center text-blue-600 hover:text-blue-700"
+            >
+              <Plus className="w-4 h-4 mr-1" />
+              Add Experience
+            </button>
+          </div>
+        );
 
-  const addSkill = () => {
-    setResumeData(prev => ({
-      ...prev,
-      skills: [...prev.skills, '']
-    }));
-  };
+      case 4:
+        return (
+          <div className="space-y-6">
+            {formState.education.map((edu, index) => (
+              <Card key={index}>
+                <CardHeader>
+                  <CardTitle className="text-lg">Education {index + 1}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Institution</label>
+                      <input
+                        type="text"
+                        className="w-full p-2 border rounded-md"
+                        value={edu.institution}
+                        onChange={(e) => handleInputChange('education', 'institution', e.target.value, index)}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Degree</label>
+                      <input
+                        type="text"
+                        className="w-full p-2 border rounded-md"
+                        value={edu.degree}
+                        onChange={(e) => handleInputChange('education', 'degree', e.target.value, index)}
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Field of Study</label>
+                      <input
+                        type="text"
+                        className="w-full p-2 border rounded-md"
+                        value={edu.field}
+                        onChange={(e) => handleInputChange('education', 'field', e.target.value, index)}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">GPA</label>
+                      <input
+                        type="text"
+                        className="w-full p-2 border rounded-md"
+                        value={edu.gpa}
+                        onChange={(e) => handleInputChange('education', 'gpa', e.target.value, index)}
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+                <CardFooter className="justify-end space-x-2">
+                  {formState.education.length > 1 && (
+                    <button
+                      onClick={() => removeArrayItem('education', index)}
+                      className="flex items-center text-red-600 hover:text-red-700"
+                    >
+                      <Trash2 className="w-4 h-4 mr-1" />
+                      Remove
+                    </button>
+                  )}
+                </CardFooter>
+              </Card>
+            ))}
+            <button
+              onClick={() => addArrayItem('education', {
+                institution: '',
+                degree: '',
+                field: '',
+                startDate: '',
+                endDate: '',
+                gpa: ''
+              })}
+              className="flex items-center text-blue-600 hover:text-blue-700"
+            >
+              <Plus className="w-4 h-4 mr-1" />
+              Add Education
+            </button>
+          </div>
+        );
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    // Submit logic
+        case 5:
+          return (
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Technical Skills</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {formState.skills.technical.map((skill, index) => (
+                      <div key={index} className="flex items-center space-x-2">
+                        <input
+                          type="text"
+                          className="flex-1 p-2 border rounded-md"
+                          value={skill}
+                          onChange={(e) =>
+                            handleInputChange('skills', 'technical',
+                              formState.skills.technical.map((s, i) => i === index ? e.target.value : s)
+                            )
+                          }
+                        />
+                        {formState.skills.technical.length > 1 && (
+                          <button
+                            onClick={() => removeSkill('technical', index)}
+                            className="text-red-600 hover:text-red-700"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                    <button
+                      onClick={() => addSkill('technical')}
+                      className="flex items-center text-blue-600 hover:text-blue-700"
+                    >
+                      <Plus className="w-4 h-4 mr-1" />
+                      Add Technical Skill
+                    </button>
+                  </div>
+                </CardContent>
+              </Card>
+        
+              <Card>
+                <CardHeader>
+                  <CardTitle>Soft Skills</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {formState.skills.soft.map((skill, index) => (
+                      <div key={index} className="flex items-center space-x-2">
+                        <input
+                          type="text"
+                          className="flex-1 p-2 border rounded-md"
+                          value={skill}
+                          onChange={(e) =>
+                            handleInputChange('skills', 'soft',
+                              formState.skills.soft.map((s, i) => i === index ? e.target.value : s)
+                            )
+                          }
+                        />
+                        {formState.skills.soft.length > 1 && (
+                          <button
+                            onClick={() => removeSkill('soft', index)}
+                            className="text-red-600 hover:text-red-700"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                    <button
+                      onClick={() => addSkill('soft')}
+                      className="flex items-center text-blue-600 hover:text-blue-700"
+                    >
+                      <Plus className="w-4 h-4 mr-1" />
+                      Add Soft Skill
+                    </button>
+                  </div>
+                </CardContent>
+              </Card>
+        
+              <Card>
+                <CardHeader>
+                  <CardTitle>Languages</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {formState.skills.languages.map((language, index) => (
+                      <div key={index} className="flex items-center space-x-2">
+                        <input
+                          type="text"
+                          className="flex-1 p-2 border rounded-md"
+                          value={language}
+                          onChange={(e) =>
+                            handleInputChange('skills', 'languages',
+                              formState.skills.languages.map((l, i) => i === index ? e.target.value : l)
+                            )
+                          }
+                        />
+                        {formState.skills.languages.length > 1 && (
+                          <button
+                            onClick={() => removeSkill('languages', index)}
+                            className="text-red-600 hover:text-red-700"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                    <button
+                      onClick={() => addSkill('languages')}
+                      className="flex items-center text-blue-600 hover:text-blue-700"
+                    >
+                      <Plus className="w-4 h-4 mr-1" />
+                      Add Language
+                    </button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          );
+        
+        case 6:
+          return (
+            <div className="space-y-6">
+              {formState.certifications.map((cert, index) => (
+                <Card key={index}>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Certification {index + 1}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Name</label>
+                        <input
+                          type="text"
+                          className="w-full p-2 border rounded-md"
+                          value={cert.name}
+                          onChange={(e) =>
+                            handleInputChange('certifications', 'name', e.target.value, index)
+                          }
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Issuer</label>
+                        <input
+                          type="text"
+                          className="w-full p-2 border rounded-md"
+                          value={cert.issuer}
+                          onChange={(e) =>
+                            handleInputChange('certifications', 'issuer', e.target.value, index)
+                          }
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Date</label>
+                        <input
+                          type="date"
+                          className="w-full p-2 border rounded-md"
+                          value={cert.date}
+                          onChange={(e) =>
+                            handleInputChange('certifications', 'date', e.target.value, index)
+                          }
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1">URL</label>
+                        <input
+                          type="url"
+                          className="w-full p-2 border rounded-md"
+                          value={cert.url}
+                          onChange={(e) =>
+                            handleInputChange('certifications', 'url', e.target.value, index)
+                          }
+                        />
+                      </div>
+                    </div>
+                  </CardContent>
+                  <CardFooter className="justify-end space-x-2">
+                    {formState.certifications.length > 1 && (
+                      <button
+                        onClick={() => removeArrayItem('certifications', index)}
+                        className="flex items-center text-red-600 hover:text-red-700"
+                      >
+                        <Trash2 className="w-4 h-4 mr-1" />
+                        Remove
+                      </button>
+                    )}
+                  </CardFooter>
+                </Card>
+              ))}
+              <button
+                onClick={() => addArrayItem('certifications', {
+                  name: '',
+                  issuer: '',
+                  date: '',
+                  url: ''
+                })}
+                className="flex items-center text-blue-600 hover:text-blue-700"
+              >
+                <Plus className="w-4 h-4 mr-1" />
+                Add Certification
+              </button>
+            </div>
+          );
+        
+      default:
+        return null;
+    }
   };
 
   return (
-    <div>
-      <style>
-        {`
-          .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f9fafb;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-          }
-          .tabs {
-            display: flex;
-            gap: 12px;
-            border-bottom: 2px solid #e5e7eb;
-            margin-bottom: 16px;
-          }
-          .tab-button {
-            padding: 10px 20px;
-            cursor: pointer;
-            border-radius: 4px;
-            font-weight: 500;
-            color: #374151;
-          }
-          .tab-button.active {
-            color: #2563eb;
-            background-color: #e0f2fe;
-            border: 1px solid #bfdbfe;
-          }
-          .input-group {
-            margin-bottom: 20px;
-          }
-          .section-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #111827;
-            margin-bottom: 12px;
-          }
-          .input-label {
-            display: block;
-            font-size: 14px;
-            color: #374151;
-            margin-bottom: 6px;
-          }
-          .input-field {
-            width: 100%;
-            padding: 8px;
-            font-size: 14px;
-            border: 1px solid #d1d5db;
-            border-radius: 4px;
-          }
-          .add-button, .remove-button, .button {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 8px 12px;
-            color: #ffffff;
-            background-color: #2563eb;
-            border-radius: 4px;
-            cursor: pointer;
-          }
-          .remove-button {
-            background-color: #dc2626;
-          }
-          .add-button {
-            background-color: #10b981;
-          }
-          .button {
-            background-color: #3b82f6;
-            font-weight: 600;
-            padding: 10px 16px;
-          }
-        `}
-      </style>
-
-      <div className="container">
-        <div className="tabs">
-          <button
-            className={`tab-button ${activeTab === 'personalInfo' ? 'active' : ''}`}
-            onClick={() => handleTabChange('personalInfo')}
-          >
-            Personal Info
-          </button>
-          <button
-            className={`tab-button ${activeTab === 'experience' ? 'active' : ''}`}
-            onClick={() => handleTabChange('experience')}
-          >
-            Experience
-          </button>
-          <button
-            className={`tab-button ${activeTab === 'education' ? 'active' : ''}`}
-            onClick={() => handleTabChange('education')}
-          >
-            Education
-          </button>
-          <button
-            className={`tab-button ${activeTab === 'skills' ? 'active' : ''}`}
-            onClick={() => handleTabChange('skills')}
-          >
-            Skills
-          </button>
+    <div className="max-w-4xl mx-auto p-6">
+      <div className="mb-8">
+        <div className="flex justify-between items-center mb-4">
+          {steps.map((step) => (
+            <div
+              key={step.number}
+              className={`flex items-center ${
+                currentStep === step.number ? 'text-blue-600' : 'text-gray-500'
+              }`}
+            >
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
+                currentStep === step.number ? 'border-blue-600 bg-blue-600 text-white' : 'border-gray-300'
+              }`}>
+                {currentStep > step.number ? (
+                  <Check className="w-4 h-4" />
+                ) : (
+                  step.number
+                )}
+              </div>
+              <span className="ml-2 hidden sm:inline">{step.title}</span>
+            </div>
+          ))}
         </div>
+      </div>
 
-        <form onSubmit={handleSubmit}>
-          {activeTab === 'personalInfo' && (
-            <div className="input-group">
-              <h3 className="section-title">Personal Information</h3>
-              <label className="input-label">Full Name</label>
-              <input
-                type="text"
-                name="fullName"
-                value={resumeData.personalInfo.fullName}
-                onChange={(e) => handleChange('personalInfo', e.target.name, e.target.value)}
-                className="input-field"
-              />
-              {/* Add other personal info fields */}
-            </div>
+      {renderStepContent()}
+
+      <div className="mt-8 flex justify-between">
+        <button
+          onClick={() => setCurrentStep(prev => prev - 1)}
+          className={`flex items-center px-4 py-2 rounded-md ${
+            currentStep === 1
+              ? 'invisible'
+              : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+          }`}
+        >
+          <ChevronLeft className="w-4 h-4 mr-2" />
+          Previous
+        </button>
+        
+        <button
+          onClick={() => setCurrentStep(prev => prev + 1)}
+          className={`flex items-center px-4 py-2 rounded-md ${
+            currentStep === steps.length
+              ? 'bg-green-600 hover:bg-green-700 text-white'
+              : 'bg-blue-600 hover:bg-blue-700 text-white'
+          }`}
+        >
+          {currentStep === steps.length ? (
+            <>
+              <Check className="w-4 h-4 mr-2" />
+              Finish
+            </>
+          ) : (
+            <>
+              Next
+              <ChevronRight className="w-4 h-4 ml-2" />
+            </>
           )}
-
-          {activeTab === 'experience' && (
-            <div>
-              <h3 className="section-title">Experience</h3>
-              {resumeData.experience.map((exp, index) => (
-                <div key={index} className="input-group">
-                  <label className="input-label">Company</label>
-                  <input
-                    type="text"
-                    value={exp.company}
-                    onChange={(e) => handleExperienceChange(index, 'company', e.target.value)}
-                    className="input-field"
-                  />
-                  {/* Other experience fields */}
-                  <button onClick={() => removeExperience(index)} className="remove-button mt-2">
-                    <TrashIcon className="h-5 w-5 mr-1" /> Remove Experience
-                  </button>
-                </div>
-              ))}
-              <button onClick={addExperience} className="add-button mt-4">
-                <PlusIcon className="h-5 w-5 mr-1" /> Add Experience
-              </button>
-            </div>
-          )}
-
-          {activeTab === 'education' && (
-            <div>
-              <h3 className="section-title">Education</h3>
-              {resumeData.education.map((edu, index) => (
-                <div key={index} className="input-group">
-                  <label className="input-label">Institution</label>
-                  <input
-                    type="text"
-                    value={edu.institution}
-                    onChange={(e) => handleEducationChange(index, 'institution', e.target.value)}
-                    className="input-field"
-                  />
-                  {/* Other education fields */}
-                  <button onClick={() => removeEducation(index)} className="remove-button mt-2">
-                    <TrashIcon className="h-5 w-5 mr-1" /> Remove Education
-                  </button>
-                </div>
-              ))}
-              <button onClick={addEducation} className="add-button mt-4">
-                <PlusIcon className="h-5 w-5 mr-1" /> Add Education
-              </button>
-            </div>
-          )}
-
-          {activeTab === 'skills' && (
-            <div>
-              <h3 className="section-title">Skills</h3>
-              {resumeData.skills.map((skill, index) => (
-                <div key={index} className="input-group">
-                  <input
-                    type="text"
-                    value={skill}
-                    onChange={(e) => handleSkillChange(index, e.target.value)}
-                    className="input-field"
-                  />
-                </div>
-              ))}
-              <button onClick={addSkill} className="add-button mt-4">
-                <PlusIcon className="h-5 w-5 mr-1" /> Add Skill
-              </button>
-            </div>
-          )}
-
-          <div className="flex justify-end mt-6">
-            <button type="submit" className="button">
-              Create Resume
-            </button>
-          </div>
-        </form>
+        </button>
       </div>
     </div>
   );
 };
 
-export default CreateResume;
+export default ResumeBuilder;

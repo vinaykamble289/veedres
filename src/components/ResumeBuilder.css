@@ -1,0 +1,183 @@
+/* Base Styling */
+body {
+    font-family: Arial, sans-serif;
+    color: #333;
+  }
+  
+  .max-w-4xl {
+    max-width: 64rem;
+    margin: auto;
+    padding: 1.5rem;
+  }
+  
+  .text-blue-600 {
+    color: #000000;
+  }
+  
+  .text-gray-500 {
+    color: #6b7280;
+  }
+  
+  .text-gray-700 {
+    color: #374151;
+  }
+  
+  .text-white {
+    color: #ffffff;
+  }
+  
+  /* Form Container */
+  .space-y-4, .space-y-6 {
+    margin-bottom: 1.5rem;
+  }
+  
+  .grid {
+    display: grid;
+  }
+  
+  .grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .gap-4 {
+    gap: 1rem;
+  }
+  
+  /* Labels and Inputs */
+  label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+    color: #4b5563;
+  }
+  
+  input[type="text"], input[type="email"], input[type="tel"], input[type="url"], input[type="date"], textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    outline: none;
+  }
+  
+  input:focus, textarea:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+  }
+  
+  /* Stepper Navigation */
+  .flex {
+    display: flex;
+  }
+  
+  .items-center {
+    align-items: center;
+  }
+  
+  .justify-between {
+    justify-content: space-between;
+  }
+  
+  .mb-4, .mb-8 {
+    margin-bottom: 2rem;
+  }
+  
+  .w-8, .h-8 {
+    width: 2rem;
+    height: 2rem;
+  }
+  
+  .rounded-full {
+    border-radius: 9999px;
+  }
+  
+  .border-2 {
+    border-width: 2px;
+  }
+  
+  .bg-blue-600 {
+    background-color: #2563eb;
+  }
+  
+  /* Buttons */
+  button {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .bg-blue-600:hover {
+    background-color: #1d4ed8;
+  }
+  
+  .bg-gray-100 {
+    background-color: #f3f4f6;
+  }
+  
+  .bg-gray-100:hover {
+    background-color: #e5e7eb;
+  }
+  
+  .bg-green-600 {
+    background-color: #16a34a;
+  }
+  
+  .bg-green-600:hover {
+    background-color: #15803d;
+  }
+  
+  /* Dynamic Classes */
+  .invisible {
+    visibility: hidden;
+  }
+  
+  .mr-1 {
+    margin-right: 0.25rem;
+  }
+  
+  .ml-2 {
+    margin-left: 0.5rem;
+  }
+  
+  .ml-1, .mr-2 {
+    margin: 0 0.5rem;
+  }
+  
+  .p-2, .px-4, .py-2 {
+    padding: 0.5rem;
+  }
+  
+  /* Cards */
+  .card {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+  }
+  
+  .card-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #2563eb;
+  }
+  
+  .card-content {
+    margin-top: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .card-footer {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .text-red-600 {
+    color: #dc2626;
+  }
+  
+  .text-red-600:hover {
+    color: #b91c1c;
+  }
+  
