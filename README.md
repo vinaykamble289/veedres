@@ -1,10 +1,7 @@
-Based on the provided `package.json` file, here’s a README file for your project:
 
----
+# VEEDRES.AI
 
-# Frontend Application
-
-This project is a frontend web application that leverages React, Express, and Tailwind CSS for a dynamic and responsive UI. It also integrates user authentication, API handling, and database management.
+This project is a web application that leverages React, Express, and Tailwind CSS for a dynamic and responsive UI. It also integrates user authentication, API handling, and database management.
 
 ## Table of Contents
 
