@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "./card";
 import './ResumeBuilder.css';
-
+let userid=1;
 //import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const ResumeBuilder = () => {
@@ -120,6 +120,78 @@ const ResumeBuilder = () => {
       }
     }));
   };
+
+  
+  const submitFormData = async () => {
+    try {
+      // Validate required fields
+      if (!formState.personalInfo.fullName || !formState.personalInfo.email) {
+        throw new Error('Name and email are required');
+      }
+  
+      // Clean up the form data
+      const cleanFormData = {
+        userId: userid,
+        title: formState.title || 'Untitled Resume',
+        personalInfo: {
+          ...formState.personalInfo,
+          linkedin: formState.personalInfo.linkedin || '',
+          portfolio: formState.personalInfo.portfolio || '',
+        },
+        professionalSummary: formState.professionalSummary || '',
+        experience: formState.experience.map(exp => ({
+          ...exp,
+          achievements: Array.isArray(exp.achievements) 
+            ? exp.achievements.filter(a => a.trim() !== '')
+            : []
+        })),
+        education: formState.education.map(edu => ({
+          ...edu,
+          gpa: edu.gpa || ''
+        })),
+        skills: {
+          technical: Array.isArray(formState.skills.technical) 
+            ? formState.skills.technical.filter(skill => skill.trim() !== '')
+            : [],
+          soft: Array.isArray(formState.skills.soft)
+            ? formState.skills.soft.filter(skill => skill.trim() !== '')
+            : [],
+          languages: Array.isArray(formState.skills.languages)
+            ? formState.skills.languages.filter(lang => lang.trim() !== '')
+            : []
+        },
+        certifications: formState.certifications.map(cert => ({
+          ...cert,
+          url: cert.url || ''
+        }))
+      };
+  
+      const response = await fetch('http://localhost:80/api/resumes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(cleanFormData)
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create resume');
+      }
+  
+      const result = await response.json();
+      alert('Resume created successfully!');
+      
+      // Open PDF in new tab
+      if (result.pdfUrl) {
+        window.open(`http://localhost:80${result.pdfUrl}`, '_blank');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('Error creating resume: ' + error.message);
+    }
+  };
+
 
   const renderStepContent = () => {
     switch (currentStep) {
@@ -638,8 +710,10 @@ const ResumeBuilder = () => {
         >
           {currentStep === steps.length ? (
             <>
-              <Check className="w-4 h-4 mr-2" />
-              Finish
+              <button onClick={submitFormData} className="bg-green-600 text-white">
+                 Finish and Save
+              </button>
+
             </>
           ) : (
             <>

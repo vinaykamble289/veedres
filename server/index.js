@@ -11,7 +11,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:3001',
+  origin: process.env.CLIENT_URL || 'http://localhost:3000',
   credentials: true
 }));
 app.use(express.json());
@@ -129,15 +129,15 @@ app.post('/api/register', async (req, res) => {
 app.post('/api/login', async (req, res) => {
   const client = await pool.connect();
   try {
-    const { name, password } = req.body;
+    const { username, password } = req.body;
 
-    if (!email || !password) {
-      throw new Error('Email and password are required');
+    if (!username || !password) {
+      throw new Error('username and password are required');
     }
 
     const result = await client.query(
       'SELECT * FROM users WHERE name = $1',
-      [name]
+      [username]
     );
 
     if (result.rows.length === 0) {

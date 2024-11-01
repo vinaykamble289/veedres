@@ -5,7 +5,7 @@ import './styles.css'; // Ensure to create this CSS file or update the path
 
 const Login = ({ setIsAuthenticated }) => {
   const [formData, setFormData] = useState({
-    name: '',
+    username: '',
     password: ''
   });
   const [error, setError] = useState('');
