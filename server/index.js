@@ -9,6 +9,8 @@ const dotenv = require('dotenv');
 dotenv.config();
 const app = express();
 
+process.env.JWT_SECRET = 'your_secret_key';
+
 // Middleware
 app.use(cors({
   origin: process.env.CLIENT_URL || 'http://localhost:3000',
@@ -21,7 +23,7 @@ const pool = new Pool({
   user: process.env.DB_USER || 'postgres',
   host: process.env.DB_HOST || 'localhost',
   database: 'career_portal',
-  password: process.env.DB_PASSWORD,
+  password: process.env.DB_PASSWORD || '123',
   port: process.env.DB_PORT || 5432,
   max: 20, // Maximum number of clients in the pool
   idleTimeoutMillis: 30000,
@@ -129,40 +131,24 @@ app.post('/api/register', async (req, res) => {
 app.post('/api/login', async (req, res) => {
   const client = await pool.connect();
   try {
-    const { username, password } = req.body;
+    const { name, password } = req.body;
 
-    if (!username || !password) {
-      throw new Error('username and password are required');
+    if (!name || !password) {
+      return res.status(400).json({ message: 'Name and password are required' });
     }
 
-    const result = await client.query(
-      'SELECT * FROM users WHERE name = $1',
-      [username]
-    );
-
+    const result = await client.query('SELECT * FROM users WHERE name = $1', [name]);
     if (result.rows.length === 0) {
-      throw new Error('Invalid credentials');
+      return res.status(401).json({ message: 'Invalid credentials' });
     }
 
     const user = result.rows[0];
     const validPassword = await bcrypt.compare(password, user.password);
-
     if (!validPassword) {
-      throw new Error('Invalid credentials');
+      return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    // Update last login timestamp
-    await client.query(
-      'UPDATE users SET updated_at = CURRENT_TIMESTAMP WHERE id = $1',
-      [user.id]
-    );
-
-    const token = jwt.sign(
-      { id: user.id },
-      process.env.JWT_SECRET,
-      { expiresIn: '24h' }
-    );
-
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '24h' });
     res.json({
       token,
       user: {
@@ -172,13 +158,13 @@ app.post('/api/login', async (req, res) => {
       }
     });
   } catch (error) {
-    res.status(error.message.includes('Invalid credentials') ? 401 : 500).json({
-      message: error.message || 'Server error'
-    });
+    console.error('Detailed Error in login:', error);  // Log detailed error
+    res.status(500).json({ message: 'Server error occurred during login' });
   } finally {
     client.release();
   }
 });
+
 
 // Protected user data endpoint
 app.get('/api/user', authenticateToken, async (req, res) => {

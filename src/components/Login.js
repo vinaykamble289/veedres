@@ -5,7 +5,7 @@ import './styles.css'; // Ensure to create this CSS file or update the path
 
 const Login = ({ setIsAuthenticated }) => {
   const [formData, setFormData] = useState({
-    username: '',
+    name: '',
     password: ''
   });
   const [error, setError] = useState('');
@@ -46,8 +46,8 @@ const Login = ({ setIsAuthenticated }) => {
               type="text"
               placeholder="Username"
               required
-              value={formData.username}
-              onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             />
           </div>
           <div className="input-group">
