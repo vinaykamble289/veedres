@@ -6,6 +6,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
 dotenv.config();
 const app = express();
 
@@ -165,6 +167,39 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+
+// Initialize Google AI
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  try {
+    const { pdf, jobDescription, prompt } = req.body;
+
+    // Initialize the model
+    const model = genAI.getGenerativeModel({ model: 'gemini-pro-vision' });
+
+    // Prepare the image data
+    const imageData = {
+      inlineData: {
+        data: pdf,
+        mimeType: 'application/pdf'
+      }
+    };
+
+    // Generate content
+    const result = await model.generateContent([prompt, imageData, jobDescription]);
+    const response = await result.response;
+
+    return res.status(200).json({ response: response.text() });
+  } catch (error) {
+    console.error('Error analyzing resume:', error);
+    return res.status(500).json({ error: 'Failed to analyze resume' });
+  }
+}
 
 // Protected user data endpoint
 app.get('/api/user', authenticateToken, async (req, res) => {
