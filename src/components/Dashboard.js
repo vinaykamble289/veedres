@@ -1,157 +1,168 @@
-// src/components/Dashboard.js
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { DocumentTextIcon, CalculatorIcon, MapIcon, AcademicCapIcon, UserGroupIcon, ChatBubbleBottomCenterTextIcon } from '@heroicons/react/24/outline';
+import { 
+  FileText, Calculator, Map, GraduationCap, 
+  Users, MessageCircle, Sun, Moon, ChevronRight,
+  Sparkles, Activity
+} from 'lucide-react';
 
 const Dashboard = ({ user }) => {
-  const styles = {
-    container: {
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '2rem'
-    },
-    wrapper: {
-      maxWidth: '1120px',
-      margin: '0 auto',
-      padding: '2rem',
-      borderRadius: '12px',
-      boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
-      textAlign: 'center'
-    },
-    title: {
-      fontSize: '2rem',
-      fontWeight: '700',
-      color: '#333',
-      fontFamily: 'Roboto, sans-serif'
-    },
-    subtitle: {
-      marginTop: '1rem',
-      color: '#555',
-      fontSize: '1.25rem',
-      fontFamily: 'Roboto, sans-serif'
-    },
-    grid: {
-      marginTop: '3rem',
-      display: 'grid',
-      gap: '1.5rem',
-      gridTemplateColumns: 'repeat(1, 1fr)',
-    },
-    card: {
-      position: 'relative',
-      padding: '1.5rem',
-      backgroundColor: '#fff',
-      borderRadius: '8px',
-      overflow: 'hidden',
-      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-      transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
-      textDecoration: 'none',
-      color: 'inherit'
-    },
-    cardHover: {
-      transform: 'translateY(-5px)',
-      boxShadow: '0 10px 20px rgba(0, 0, 0, 0.15)'
-    },
-    iconWrapper: (bgColor) => ({
-      width: '50px',
-      height: '50px',
-      display: 'inline-flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderRadius: '50%',
-      backgroundColor: bgColor,
-      color: '#fff'
-    }),
-    cardTitle: {
-      marginTop: '1rem',
-      fontSize: '1.125rem',
-      fontWeight: '600',
-      color: '#333'
-    },
-    cardDescription: {
-      marginTop: '0.5rem',
-      color: '#777',
-      fontSize: '0.875rem'
-    }
-  };
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   const features = [
     {
       name: 'Create Resume',
-      description: 'Create a powerful resume.',
-      icon: DocumentTextIcon,
+      description: 'Build a professional resume that stands out',
+      icon: FileText,
       link: '/create-resume',
-      bgColor: 'bg-blue-500'
+      gradient: 'from-pink-500 to-rose-500',
+      stats: '2.5k+ created'
     },
     {
       name: 'ATS Calculator',
-      description: 'Check ATS (Applicant Tracking System).',
-      icon: CalculatorIcon,
+      description: 'Optimize your resume for ATS systems',
+      icon: Calculator,
       link: '/ats-calculator',
-      bgColor: 'bg-green-500'
+      gradient: 'from-violet-500 to-purple-500',
+      stats: '98% success rate'
     },
     {
-      name: 'RoadMap',
-      description: 'Follow personalized RoadMap for career development.',
-      icon: MapIcon,
+      name: 'Career RoadMap',
+      description: 'Plan your career progression',
+      icon: Map,
       link: '/roadmap',
-      bgColor: 'bg-purple-500'
+      gradient: 'from-blue-500 to-indigo-500',
+      stats: 'Trending'
     },
     {
-      name: 'Current Courses',
-      description: 'Manage current courses about skills.',
-      icon: AcademicCapIcon,
+      name: 'Skill Courses',
+      description: 'Enhance your professional skills',
+      icon: GraduationCap,
       link: '/courses',
-      bgColor: 'bg-yellow-500'
+      gradient: 'from-emerald-500 to-teal-500',
+      stats: '50+ courses'
     },
     {
-      name: 'Interview',
-      description: 'Schedule interview and apply for new posting.',
-      icon: UserGroupIcon,
+      name: 'Interview Prep',
+      description: 'Practice and prepare for interviews',
+      icon: Users,
       link: '/interview',
-      bgColor: 'bg-indigo-500'
+      gradient: 'from-orange-500 to-amber-500',
+      stats: 'Live practice'
     },
     {
-      name: 'Chat with AI',
-      description: 'For any queries and Guidance chat with your personalized AI chatbot.',
-      icon: ChatBubbleBottomCenterTextIcon,
+      name: 'AI Assistant',
+      description: 'Get personalized career guidance',
+      icon: MessageCircle,
       link: '/ai-chat',
-      bgColor: 'bg-pink-500'
+      gradient: 'from-cyan-500 to-blue-500',
+      stats: '24/7 support'
     }
   ];
 
   return (
-    <div style={styles.container}>
-      <div style={styles.wrapper}>
-        <h2 style={styles.title}>Welcome, {user?.name}!</h2>
-        <p style={styles.subtitle}>
-          Access all your career development tools in one place
-        </p>
+    <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+      <div className="fixed inset-0 bg-gradient-to-br from-violet-500/20 to-pink-500/20 pointer-events-none" />
+      
+      {/* Animated Background Shapes */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-48 -right-48 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" />
+        <div className="absolute -bottom-48 -left-48 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-1000" />
+      </div>
 
-        <div style={{ ...styles.grid, gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
-          {features.map((feature) => (
-            <Link
-              key={feature.name}
-              to={feature.link}
-              style={styles.card}
-              onMouseEnter={(e) => Object.assign(e.currentTarget.style, styles.cardHover)}
-              onMouseLeave={(e) => Object.assign(e.currentTarget.style, { transform: 'translateY(0)', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)' })}
-            >
-              <div>
-                <span style={styles.iconWrapper(feature.bgColor)}>
-                  <feature.icon className="h-6 w-6" aria-hidden="true" />
+      {/* Header */}
+      <header className={`fixed top-0 w-full ${isDarkMode ? 'bg-gray-900/90' : 'bg-white/90'} backdrop-blur-xl shadow-lg z-50`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <Link to="/" className="flex items-center space-x-2 group">
+              <div className="relative">
+                <div className="w-10 h-10 bg-gradient-to-r from-violet-500 to-pink-500 rounded-xl transform group-hover:rotate-6 transition-all duration-300" />
+                <Sparkles className="absolute -top-1 -right-1 w-4 h-4 text-yellow-400 animate-bounce" />
+              </div>
+              <span className="text-2xl font-bold bg-gradient-to-r from-violet-500 to-pink-500 bg-clip-text text-transparent">
+                VeedRes
+              </span>
+            </Link>
+            
+            <div className="flex items-center space-x-4">
+              <div className="px-4 py-2 rounded-lg bg-gradient-to-r from-violet-500/10 to-pink-500/10 backdrop-blur-lg">
+                <Activity className="w-5 h-5 text-violet-500 inline mr-2" />
+                <span className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+                  {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </span>
               </div>
-              <div>
-                <h3 style={styles.cardTitle}>{feature.name}</h3>
-                <p style={styles.cardDescription}>{feature.description}</p>
-              </div>
-            </Link>
-          ))}
+              
+              <button
+                onClick={() => setIsDarkMode(!isDarkMode)}
+                className={`p-2 rounded-lg transition-all duration-300 ${
+                  isDarkMode ? 'bg-gray-800 text-yellow-400' : 'bg-violet-100 text-violet-600'
+                } hover:scale-110`}
+              >
+                {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="pt-24 pb-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Welcome Section */}
+          <div className="text-center mb-16">
+            <h1 className={`text-6xl font-bold mb-6 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              Welcome back, {user?.name || 'Guest'}! ✨
+            </h1>
+            <p className={`text-xl ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} max-w-2xl mx-auto`}>
+              Your career development journey continues here
+            </p>
+          </div>
+
+          {/* Features Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {features.map((feature, index) => (
+              <Link
+                key={feature.name}
+                to={feature.link}
+                className={`group relative overflow-hidden rounded-2xl p-8 ${
+                  isDarkMode ? 'bg-gray-800/50' : 'bg-white/50'
+                } backdrop-blur-xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2`}
+              >
+                <div className={`absolute inset-0 bg-gradient-to-r ${feature.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`} />
+                <div className="absolute inset-0 bg-gradient-to-r from-violet-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                
+                <div className="relative z-10">
+                  <div className={`inline-flex p-4 rounded-xl bg-gradient-to-r ${feature.gradient} shadow-lg group-hover:scale-110 transition-transform duration-500`}>
+                    <feature.icon className="w-6 h-6 text-white" />
+                  </div>
+                  
+                  <div className="mt-6">
+                    <h3 className={`text-xl font-semibold mb-3 bg-gradient-to-r ${feature.gradient} bg-clip-text text-transparent`}>
+                      {feature.name}
+                    </h3>
+                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-4`}>
+                      {feature.description}
+                    </p>
+                    
+                    <div className="flex justify-between items-center">
+                      <span className={`text-xs font-medium px-3 py-1 rounded-full bg-gradient-to-r ${feature.gradient} text-white`}>
+                        {feature.stats}
+                      </span>
+                      <ChevronRight className={`w-5 h-5 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} group-hover:translate-x-2 transition-transform duration-300`} />
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </main>
     </div>
   );
 };

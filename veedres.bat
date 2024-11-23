@@ -1,7 +1,8 @@
-cd "e:/veedres"
+cd "e:/veedres/server"
 e:
-start cmd /k "node server/index.js"
-start cmd /k "node server/resume.js"
-start cmd /k "node server/analyze.js"
-start cmd /k "node server/roadmap.js"
+start cmd /k "node index.js"
+start cmd /k "node resume.js"
+start cmd /k "node analyze.js"
+start cmd /k "node roadmap.js"
+cd ..
 start cmd /k "npm start"
